@@ -16,11 +16,11 @@ five=$(echo "$input" | jq -r '.rate_limits.five_hour.used_percentage // empty')
 fmt() { awk -v n="$1" 'BEGIN{ if(n>=1000000) printf "%.1fM", n/1000000; else if(n>=1000) printf "%.1fk", n/1000; else printf "%d", n }'; }
 # Color for a "used" percentage: green < 50, yellow < 80, red otherwise
 usecolor() { local p=${1%.*}; if [ "$p" -lt 50 ]; then echo "$GRN"; elif [ "$p" -lt 80 ]; then echo "$YEL"; else echo "$RED"; fi; }
-# 10-cell bar plus percentage, colored by usage; "-" when unknown
+# 10-cell bar plus percentage, colored by usage (or by color $2); "-" when unknown
 bar() {
   [ -z "$1" ] && { printf '%s-%s' "$D" "$R"; return; }
-  local p=${1%.*} c f i out=""
-  c=$(usecolor "$p"); f=$(( (p + 5) / 10 )); [ "$f" -gt 10 ] && f=10
+  local p=${1%.*} c=$2 f i out=""
+  [ -z "$c" ] && c=$(usecolor "$p"); f=$(( (p + 5) / 10 )); [ "$f" -gt 10 ] && f=10
   for ((i = 0; i < 10; i++)); do [ "$i" -lt "$f" ] && out+="▰" || out+="▱"; done
   printf '%s%s %d%%%s' "$c" "$out" "$p" "$R"
 }
@@ -58,10 +58,10 @@ else
     ] | map(tostring) | join("\u001f")')"
 
   # hit: green >= 90, yellow >= 70, red otherwise
-  if [ -z "$hit" ]; then hit_s="${D}-${R}"
-  elif [ "$hit" -ge 90 ]; then hit_s="${GRN}${hit}%${R}"
-  elif [ "$hit" -ge 70 ]; then hit_s="${YEL}${hit}%${R}"
-  else hit_s="${RED}${hit}%${R}"; fi
+  if [ -z "$hit" ]; then hit_s=$(bar "")
+  elif [ "$hit" -ge 90 ]; then hit_s=$(bar "$hit" "$GRN")
+  elif [ "$hit" -ge 70 ]; then hit_s=$(bar "$hit" "$YEL")
+  else hit_s=$(bar "$hit" "$RED"); fi
 
   # expires: mm:ss countdown; green > 5m, yellow > 1m, red otherwise
   if [ -z "$exp" ]; then exp_s="${D}-${R}"

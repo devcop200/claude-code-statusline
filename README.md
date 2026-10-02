@@ -4,7 +4,7 @@ A two-line status line for [Claude Code](https://claude.com/claude-code) showing
 
 ```
 ◆ Opus 5.5  ~/Workspaces/project │ ctx ▰▰▰▰▰▰▱▱▱▱ 63% │ tokens 56.8k │ 5h ▰▱▱▱▱▱▱▱▱▱ 8%
-cache  hit 97%  ⏱ 4:05 │ miss 2  rebuilds 1 │ miss_recache 40.0k  cold_recache 120.0k │ last_miss_cause ttl_expired  written 50.0k  causes ttl_expired:1,unknown:1  last_miss 09:41:22
+cache  hit ▰▰▰▰▰▰▰▰▰▰ 97%  ⏱ 4:05 │ miss 2  rebuilds 1 │ miss_recache 40.0k  cold_recache 120.0k │ last_miss_cause ttl_expired  written 50.0k  causes ttl_expired:1,unknown:1  last_miss 09:41:22
 ```
 
 ## Requirements
@@ -65,7 +65,7 @@ echo '{"model":{"display_name":"Opus"},"workspace":{"current_dir":"'"$PWD"'"},"c
 
 | Field | Meaning |
 |---|---|
-| `hit` | Cache hit ratio; green ≥ 90%, yellow ≥ 70%, red below |
+| `hit` | Cache hit ratio as a 10-cell bar; green ≥ 90%, yellow ≥ 70%, red below |
 | `⏱` | Time until the cache expires (`m:ss`); green > 5m, yellow > 1m, red below |
 | `miss` | Requests that missed the cache; red when higher than `rebuilds` |
 | `rebuilds` | Misses with an expected cause (TTL expiry, model switch, compaction, ...) |
